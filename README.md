@@ -1,27 +1,27 @@
 # Django + React 整合指南
 
-本指南提供了将 Django 后端与 React 前端进行整合的步骤和基础知识。以下是整合的基本流程和一些常见问题的解决方法。
+本指南提供了將 Django 後端與 React 前端進行整合的步驟和基礎知識。以下是整合的基本流程和一些常見問題的解決方法。
 
-## 环境设置
+## 環境設定
 
-1. **安装 Django 和相关库**：
-   - 使用 PyCharm 安装 Python 和 Anaconda。
-   - 在虚拟环境中安装 Django 和其他必要的库：
+1. **安裝 Django 和相關庫**：
+   - 使用 PyCharm 安裝 Python 和 Anaconda。
+   - 在虛擬環境中安裝 Django 和其他必要的庫：
      ```
      pip install django django-cors-headers djangorestframework
      ```
 
-2. **创建 Django 项目**：
-   - 使用以下命令创建一个 Django 项目：
+2. **創建 Django 專案**：
+   - 使用以下命令創建一個 Django 專案：
      ```
      django-admin startproject django_tutorial
      ```
 
-3. **前后端整合配置**：
-   - 在 Django 项目的 `settings.py` 文件中进行配置，包括设置静态文件、模板路径和 CORS 等。
+3. **前後端整合配置**：
+   - 在 Django 專案的 `settings.py` 文件中進行配置，包括設置靜態文件、模板路徑和 CORS 等。
 
-4. **创建 Django App**：
-   - 使用以下命令创建一个 Django App：
+4. **創建 Django 應用**：
+   - 使用以下命令創建一個 Django 應用：
      ```
      cd django_react
      python manage.py startapp backend
@@ -30,25 +30,25 @@
 5. **配置 Django 路由**：
    - 在 `urls.py` 文件中配置 Django 的路由，包括 API 和 React 前端的路由。
 
-6. **创建 React App**：
-   - 使用 `create-react-app` 创建 React 项目：
+6. **創建 React 應用**：
+   - 使用 `create-react-app` 創建 React 專案：
      ```
      npx create-react-app frontend
      ```
 
-## 基础知识
+## 基礎知識
 
-1. **Django 默认使用 SQLite 作为数据库**。
-2. **Django 具有内置的后台管理系统**，可以通过创建超级用户来访问。
-3. **TypeScript** 是一种 JavaScript 的超集，用于增强代码的可读性和可维护性。
+1. **Django 默認使用 SQLite 作為數據庫**。
+2. **Django 具有內置的後台管理系統**，可以通過創建超級用戶來訪問。
+3. **TypeScript** 是一種 JavaScript 的超集，用於增強代碼的可讀性和可維護性。
 
-## 解决常见问题
+## 解決常見問題
 
 1. **Fatal Python error: init_stdio_encoding**：
-   - 解决方法：在 PyCharm 的安装目录中的 `pycharm64.exe.vmoptions` 文件末尾添加 `-Dfile.encoding=UTF-8`。
+   - 解決方法：在 PyCharm 的安裝目錄中的 `pycharm64.exe.vmoptions` 文件末尾添加 `-Dfile.encoding=UTF-8`。
 
-## 文档链接
+## 文檔鏈接
 
-- [Django 官方文档](https://docs.djangoproject.com/en/5.0/)
+- [Django 官方文檔](https://docs.djangoproject.com/en/5.0/)
 
-以上是将 Django 和 React 整合的基本流程和常见问题的解决方法。你可以根据需要将这些内容整理到 GitHub 的 README.md 文件中，并根据项目的具体情况进行调整和补充。
+以上是將 Django 和 React 整合的基本流程和常見問題的解決方法。你可以根據需要將這些內容整理到 GitHub 的 README.md 文件中，並根據項目的具體情況進行調整和補充。
