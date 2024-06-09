@@ -25,7 +25,36 @@ SECRET_KEY = "django-insecure-+@w40+sqbg!jxuq*sgzdoba7rqbmsb3bl$5)_n2u9ojc%5%rca
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ["*"]
+
+# Marked up when publish------------------------------------
+ALLOWED_HOSTS = ["localhost"]
+CORS_ALLOW_CREDENTIALS = True
+
+# Optionally, you can allow all headers and methods
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS'
+]
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+]
+# ---------------------------------------------------------
 
 # Application definition
 
@@ -129,3 +158,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'frontend/build/media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Security Setting
+"""
+1. CSRF_COOKIE_SAMESITE = 'Strict'
+    Cookie 請求只有在同一個網址下才可以發送
+2. SESSION_COOKIE_SAMESITE = 'Strict'
+    請求來自同一個網址下才會發送 Cookie
+3. CSRF_COOKIE_HTTPONLY = False
+    HttpOnly 為 False 表示 Cookie 可以透過 Js 訪問(通常用於使前端框架能夠讀取 CSRF Token 並能夠在 Request 中使用)
+4. SESSION_COOKIE_HTTPONLY = True
+    Session Cookie 不能透過 Js 訪問
+"""
+CSRF_COOKIE_SAMESITE = 'Strict'
+SESSION_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
+
+# production Setting
+# CSRF_COOKIE_HTTPONLY = True
+# SESSION_COOKIE_HTTPONLY = True

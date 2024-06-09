@@ -1,5 +1,12 @@
 import React from "react";
+// style
 import {Grid} from "@mui/material";
+
+// API
+
+// components
+
+// interface
 
 const SideImage = () => {
     return (

@@ -2,6 +2,8 @@ import React from 'react'
 import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import $ from 'jquery'
+
+// style
 import {
     Fade,
     Container,
@@ -10,105 +12,68 @@ import {
     Button,
 } from "@mui/material";
 
-import AlertLog from "../Components/AlertLog";
-import Loading from "../Components/Loading";
+// API
+import {API_login} from '../../utils/API/API_Core'
 
+// components
 import SideImage from "./Components/SideImage";
 import Title from "./Components/Title";
 import LoginInput from "./Components/LoginInput";
 
-// import { Connection } from "../../common/axiosConnect";
-import {API_login} from "../../utils/API";
+// interface
+import {ResponseData} from "../../utils/API/API_Interface"
+import {Login_Props} from "../../utils/Interface/Login/Login";
 
-interface loginProps {
-    setUserName: React.Dispatch<React.SetStateAction<string>>;
-    setAuth: React.Dispatch<React.SetStateAction<boolean>>;
-    setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-    setTeacher: React.Dispatch<React.SetStateAction<boolean>>
-}
 
-const Login = (props: loginProps) => {
-    const {setUserName, setAuth, setAdmin, setTeacher} = props
-    useEffect(() => {
-        $("#acc").on("keydown", (e: object): void => {
-            // if (e.keyCode === 13) login();
-        });
-        $("#psw").on("keydown", (e: object): void => {
-            // if (e.keyCode === 13) login();
-        });
-    });
+const Login = (props: Login_Props) => {
+    const {
+        setUserName,
+        setAuth,
+        setAdmin,
+        setTeacher,
+        alertAndLoad
+    } = props
     //帳號密碼
-    const [acc, setAcc] = useState<string>("");
-    const [psw, setPsw] = useState<string>("");
+    const [acc, setAcc] = useState<string>("")
+    const [psw, setPsw] = useState<string>("")
     //設定顯示或隱藏psw
-    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+    const NavLocation = useNavigate()
 
-    //AlertLog & Loading Setting------------------------------
-    //AlertLog
-    const [AlertOpen, setAlertLog] = useState<boolean>(false);
-    const [AlertTitle, setAlertTitle] = useState<string>("");
-    const [AlertMsg, setAlertMsg] = useState<string>("");
-    const handleAlertLogClose = () => {
-        setAlertLog(false);
-        setTimeout(() => {
-            setAlertTitle("");
-            setAlertMsg("");
-        }, 500);
-    };
-    const handelAlertLogSetting = (Title: string, Msg: string) => {
-        setAlertLog(true);
-        setAlertTitle(Title);
-        setAlertMsg(Msg);
-    };
-    //Loading
-    const [LoadingOpen, setLoading] = useState<boolean>(false);
-    //---------------------------------------------------------
 
-    const NavLocation = useNavigate();
+    $('#acc').on('keyup', (e) => {
+        e.preventDefault()
+        if (e.key === "Enter") $('#login').click()
+    })
+    $('#psw').on('keyup', (e) => {
+        e.preventDefault()
+        if (e.key === "Enter") $('#login').click()
+    })
+
     //Login Function
-    const login = () => {
-        if ($("#acc").val() === "" || $("#psw").val() === "") {
-            setAlertLog(true);
-            setAlertTitle("錯誤");
-            setAlertMsg("帳號或密碼不得為空");
+    function login() {
+        if (acc === "" || psw === "") {
+            return alertAndLoad.handelAlertLogSetting("錯誤", "帳號或密碼不得為空!")
         }
-        setLoading(true);
+        alertAndLoad.setLoading(true);
         API_login(acc, psw).then((response) => {
-            setUserName(acc)
-            setLoading(false)
-            NavLocation("/home")
+            if (response.status === 200) {
+                setUserName(response.message)
+                setAuth(true)
+                alertAndLoad.setLoading(false)
+                NavLocation("/home")
+            } else {
+                alertAndLoad.setLoading(false)
+                alertAndLoad.handelAlertLogSetting('錯誤', response.message)
+            }
+        }).catch((err: ResponseData) => {
+            alert(err.message)
         })
-        // Connection.login(acc, psw).then((res:object) => {
-        //     if (res.data.state) {
-        //         const tokenDetail = Connection.decode(res.data.result.token);
-        //
-        //         localStorage.setItem("token", res.data.result.token);
-        //         localStorage.setItem(
-        //             "refresh_token",
-        //             tokenDetail.refresh_token
-        //         );
-        //
-        //         setUserName(tokenDetail.name);
-        //         setAuth(true);
-        //         setAdmin(tokenDetail.is_admin);
-        //         setTeacher(tokenDetail.is_teacher);
-        //         NavLocation("/home");
-        //     } else {
-        //         handelAlertLogSetting("通知", res.data.msg);
-        //         setLoading(false);
-        //     }
-        // });
-    };
+    }
+
 
     return (
         <>
-            <Loading Loading={LoadingOpen}/>
-            <AlertLog
-                AlertLog={AlertOpen}
-                setAlertLog={handleAlertLogClose}
-                AlertTitle={AlertTitle}
-                AlertMsg={AlertMsg}
-            />
             <Fade in={true} timeout={1200}>
                 <Grid
                     container
@@ -159,15 +124,18 @@ const Login = (props: loginProps) => {
                                     justifyContent: "center",
                                     marginTop: "50px",
                                 }}>
-                                    <Button variant="contained" sx={{
-                                        width: "40%",
-                                        backgroundColor: "rgb(239,230,230)",
-                                        color: "black",
-                                        "&:hover": {
-                                            backgroundColor:
-                                                "rgb(240,150,150)",
-                                        },
-                                    }} onClick={login}>
+                                    <Button
+                                        id='login'
+                                        variant="contained"
+                                        sx={{
+                                            width: "40%",
+                                            backgroundColor: "rgb(239,230,230)",
+                                            color: "black",
+                                            "&:hover": {
+                                                backgroundColor:
+                                                    "rgb(240,150,150)",
+                                            },
+                                        }} onClick={login}>
                                         登入
                                     </Button>
                                 </Box>

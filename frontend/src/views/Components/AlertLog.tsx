@@ -8,18 +8,22 @@ import {
 } from '@mui/material'
 import React from "react";
 
-interface alertProps{
+import {AlertAndLoad} from '../../utils/Interface/GlobalComponents/AlertAndLoad'
+
+interface alertProps {
     AlertLog: boolean
-    AlertTitle:string
-    AlertMsg:string
-    setAlertLog: React.Dispatch<React.SetStateAction<boolean>>;
+    AlertTitle: string
+    AlertMsg: string
+    AlertLogClose: Function
 }
+
+
 const AlertLog = (props: alertProps) => {
-    const {AlertLog,AlertTitle,AlertMsg, setAlertLog} = props
+    const {AlertLog, AlertTitle, AlertMsg, AlertLogClose} = props
     return (
         <Dialog
             open={AlertLog}
-            onClose={setAlertLog}
+            onClose={(e) => AlertLogClose()}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
             sx={{
@@ -35,7 +39,7 @@ const AlertLog = (props: alertProps) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={(e) => setAlertLog}>好</Button>
+                <Button onClick={(e) => AlertLogClose()}>好</Button>
             </DialogActions>
         </Dialog>
     );
