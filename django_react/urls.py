@@ -18,15 +18,10 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
-from rest_framework.routers import DefaultRouter
 
+# using for join static file route for media
 from django.conf.urls.static import static
 from django.conf import settings
-
-# from backend.views import AccountViewSet
-
-router = DefaultRouter()
-# router.register('login', AccountViewSet)
 
 urlpatterns = ([
     path("admin/", admin.site.urls),

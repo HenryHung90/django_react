@@ -1,4 +1,5 @@
 import React from "react";
+// style
 import {
     Box,
     FormControl,
@@ -8,17 +9,14 @@ import {
     IconButton
 } from "@mui/material";
 import {VisibilityOff, Visibility} from "@mui/icons-material"
+// API
 
-interface loginInputProps {
-    acc: string
-    psw: string
-    showPassword: boolean
-    setAcc: React.Dispatch<React.SetStateAction<string>>
-    setPsw: React.Dispatch<React.SetStateAction<string>>
-    setShowPassword: React.Dispatch<React.SetStateAction<boolean>>
-}
+// components
 
-const LoginInput = (props: loginInputProps) => {
+// interface
+import {LoginInput_Props} from "../../../utils/Interface/Login/Login";
+
+const LoginInput = (props: LoginInput_Props) => {
     const {
         acc,
         psw,
@@ -39,7 +37,7 @@ const LoginInput = (props: loginInputProps) => {
             <FormControl sx={{m: 2, width: "30ch", '@media(max-width:600px)': {width: "20ch"}}} variant="standard">
                 <InputLabel htmlFor="standard-adornment-account">帳號</InputLabel>
                 <Input
-                    id="acc"
+                    id='acc'
                     type="text"
                     value={acc}
                     onChange={e => {
@@ -50,7 +48,7 @@ const LoginInput = (props: loginInputProps) => {
             <FormControl sx={{m: 2, width: "30ch", '@media(max-width:600px)': {width: "20ch"}}} variant="standard">
                 <InputLabel htmlFor="standard-adornment-password">密碼</InputLabel>
                 <Input
-                    id="psw"
+                    id='psw'
                     type={showPassword ? "text" : "password"}
                     value={psw}
                     onChange={e => {
@@ -74,4 +72,3 @@ const LoginInput = (props: loginInputProps) => {
 }
 
 export default LoginInput
-export {}
