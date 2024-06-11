@@ -2,11 +2,12 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 // style
 // API
-import {API_studentprogram} from "../../utils/API/API_POST";
+import {API_GET_studentProgram} from "../../utils/API/API_GET";
 // Components
 import ControlBar from "./Components/ControlBar"
 import CodingPlace from "./Components/CodingPlace"
 import LunchView from "./Components/LunchView"
+import History from "./Components/History"
 // interface
 import {ResponseData} from "../../utils/API/API_Interface";
 import {Worker_Props, userCode, terminalMessage} from "../../utils/Interface/Worker/Worker";
@@ -22,7 +23,7 @@ const Worker = (props: Worker_Props) => {
     // 使用者名稱
     const {UserName, alertAndLoad} = props
     // 目前頁面
-    const [currentPage, setCurrentPage] = useState<'html' | 'javascript' | 'css' | 'terminal'>('javascript')
+    const [currentPage, setCurrentPage] = useState<'html' | 'javascript' | 'css' | 'terminal'>('terminal')
     // Coding 是否有儲存成功
     const [codeSync, setCodeSync] = useState<boolean>(true)
 
@@ -43,11 +44,11 @@ const Worker = (props: Worker_Props) => {
 
     useEffect(() => {
         // 從後端獲取該課程之 Coding
-        API_studentprogram(program_id || '', 'getone').then((response: ResponseData) => {
+        API_GET_studentProgram(program_id || null, 'getone').then((response: ResponseData) => {
             const userCode: userCode = JSON.parse(response.message)
-            userCode.html_code === null ? set_html_code(CODE_SNIPPETS['html']) : set_html_code(userCode.html_code)
-            userCode.css_code === null ? set_css_code(CODE_SNIPPETS['css']) : set_css_code(userCode.css_code)
-            userCode.javascript_code === null ? set_javascript_code(CODE_SNIPPETS['javascript']) : set_javascript_code(userCode.javascript_code)
+            userCode.html_code === null || userCode.html_code === "" ? set_html_code(CODE_SNIPPETS['html']) : set_html_code(userCode.html_code)
+            userCode.css_code === null || userCode.html_code === "" ? set_css_code(CODE_SNIPPETS['css']) : set_css_code(userCode.css_code)
+            userCode.javascript_code === null || userCode.html_code === "" ? set_javascript_code(CODE_SNIPPETS['javascript']) : set_javascript_code(userCode.javascript_code)
             setCurrentPage('html')
             alertAndLoad.setLoading(false)
         })
@@ -62,6 +63,10 @@ const Worker = (props: Worker_Props) => {
                 css_code={css_code}
                 javascript_code={javascript_code}
                 setTerminal_code={setTerminal_code}
+                alertAndLoad={alertAndLoad}
+            />
+            <History
+                alertAndLoad={alertAndLoad}
             />
             <ControlBar
                 currentPage={currentPage}
@@ -72,6 +77,7 @@ const Worker = (props: Worker_Props) => {
                 html_code={html_code}
                 css_code={css_code}
                 javascript_code={javascript_code}
+                alertAndLoad={alertAndLoad}
             />
             <CodingPlace
                 languageType={currentPage}

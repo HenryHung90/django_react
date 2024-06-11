@@ -17,7 +17,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
 // API
-import {API_studentprogram} from "../../../utils/API/API_POST"
+import {API_GET_studentProgram} from "../../../utils/API/API_GET"
 
 // components
 
@@ -33,7 +33,7 @@ const ProgramCard = (props: ProgramCard_Props) => {
     const NavLocation = useNavigate()
     useEffect(() => {
         alertAndLoad.setLoading(true)
-        API_studentprogram('', 'getall').then((response: ResponseData) => {
+        API_GET_studentProgram('', 'getall').then((response: ResponseData) => {
             setProgramList(JSON.parse(response.message))
             alertAndLoad.setLoading(false)
         })
@@ -69,10 +69,17 @@ const ProgramCard = (props: ProgramCard_Props) => {
                                     </Typography>
                                 </CardContent>
                             </CardActionArea>
-                            <CardActions>
+                            <CardActions sx={{justifyContent: 'space-between'}}>
                                 <Button variant='contained' startIcon={<CreateIcon/>} size="small">變更名稱</Button>
-                                <Button variant='contained' color='error' startIcon={<DeleteIcon/>}
-                                        size="small">刪除</Button>
+                                <Button
+                                    size="small"
+                                    sx={{
+                                        color: 'rgba(0,0,0,0.4)',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(25,118,210,0.1)'
+                                        }
+                                    }}
+                                ><DeleteIcon/></Button>
                             </CardActions>
                         </Card>
                     </Grid>

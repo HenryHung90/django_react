@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react"
 // style
 // API
 import {API_getUserInfo} from "../../utils/API/API_Core"
-import {API_ollama_ask, API_studentprogram} from "../../utils/API/API_POST"
+import {API_ollama_ask} from "../../utils/API/API_POST"
 // 引入 markedHightlight
 // 使用 Markdown 解析 chatGPT 回傳字串
 // Ref -=-

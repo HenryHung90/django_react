@@ -35,7 +35,7 @@ const ControlBar_Menu = (props: ControlBarMenu_Prop) => {
                         marginTop: '24px',
                         height: '40px',
                         backgroundColor: currentPage === page.pageName ? '#e5e5e5' : 'none',
-                        borderRadius: '20px 20px 0 0',
+                        borderRadius: '5px 5px 0 0',
                         color: currentPage === page.pageName ? '#14213d' : 'white',
                         fontWeight: 600,
                         '&:hover': {

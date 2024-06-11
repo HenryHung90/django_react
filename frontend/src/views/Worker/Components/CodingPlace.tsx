@@ -38,6 +38,7 @@ const CodingPlace = (props: CodingPlace_Props) => {
 
     }, [terminal_code, languageType]);
 
+    // 切換 language 時設定顯示不同 code
     useEffect(() => {
         switch (languageType) {
             case "html":
@@ -50,7 +51,6 @@ const CodingPlace = (props: CodingPlace_Props) => {
                 setCodingView(javascript_code)
                 break
             case 'terminal':
-                console.log(terminal_code)
                 break
         }
     }, [languageType]);
@@ -59,7 +59,7 @@ const CodingPlace = (props: CodingPlace_Props) => {
         <Box sx={{px: 1, py: 1}}>
             {languageType !== 'terminal' &&
                 <Editor
-                    height="90vh"
+                    height="91vh"
                     theme='vs-dark'
                     value={codingView}
                     onChange={(value) => {
@@ -93,6 +93,7 @@ const CodingPlace = (props: CodingPlace_Props) => {
                         fontSize: '24px',
                         height: '90vh',
                         overflowY: 'scroll',
+                        textAlign: 'left',
                     }}
                 >
                     <Button
@@ -100,7 +101,7 @@ const CodingPlace = (props: CodingPlace_Props) => {
                         sx={{
                             position: 'absolute',
                             left: '77%',
-                            top: '8%',
+                            top: '85px',
                         }}
                         onClick={() => {
                             setTerminal_code([])
@@ -111,16 +112,28 @@ const CodingPlace = (props: CodingPlace_Props) => {
                         if (value.status === 'error') {
                             return <Box
                                 key={index}
-                                sx={{backgroundColor: '#cc5757', my: 1}}
+                                sx={{
+                                    backgroundColor: '#cc5757',
+                                    my: 1,
+                                    py: 1,
+                                    px: 1,
+                                    borderBottom: '1px solid rgba(0,0,0,0.5)'
+                                }}
                             >
-                                {value.message}
+                                {value.timelog}&gt; {value.message}
                             </Box>
                         } else {
                             return <Box
                                 key={index}
-                                sx={{backgroundColor: '#14213d', my: 1}}
+                                sx={{
+                                    backgroundColor: '#14213d',
+                                    my: 1,
+                                    py: 1,
+                                    px: 1,
+                                    borderBottom: '1px solid rgba(0,0,0,0.5)'
+                                }}
                             >
-                                {value.message}
+                                {value.timelog}&gt; {value.message}
                             </Box>
                         }
                     })}

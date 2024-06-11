@@ -5,13 +5,13 @@ import {
     Container,
     Box, Button
 } from "@mui/material"
-import VideoLabelIcon from '@mui/icons-material/VideoLabel';
+import PlayArrowIcon from "@mui/icons-material/PlayArrow"
 // API
+import {getNowTime} from "../../../utils/Tools/time"
 // Components
 // interface
-import {LunchView_Props, studentProgramUpdate, terminalMessage} from "../../../utils/Interface/Worker/Worker";
-import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
-import {API_studentprogram} from "../../../utils/API/API_POST";
+import {LunchView_Props, studentProgramUpdate} from "../../../utils/Interface/Worker/Worker";
+import {API_POST_studentProgram} from "../../../utils/API/API_POST";
 import {useParams} from "react-router-dom";
 
 const LISTEN_LOG: string = ' (function() {\n' +
@@ -40,6 +40,7 @@ const LunchView = (props: LunchView_Props) => {
         css_code,
         javascript_code,
         setTerminal_code,
+        alertAndLoad,
     } = props
 
     // demo 來源
@@ -48,25 +49,6 @@ const LunchView = (props: LunchView_Props) => {
     const [demoDown, setDemoDown] = useState<boolean>(true)
     // Params
     const {program_id} = useParams();
-
-    function handleDemoStart() {
-        setDemoDown((prevState) => !prevState)
-        setDemoSrc(html_code + `<script>${LISTEN_LOG}</script>` + `<style>${css_code}</style>` + `<script>${javascript_code} </script>`)
-        const updateData: studentProgramUpdate = {
-            program_id: program_id,
-            html_code: html_code,
-            css_code: css_code,
-            javascript_code: javascript_code
-        }
-        API_studentprogram(JSON.stringify(updateData), 'update').then(response => {
-
-        })
-    }
-
-
-    useEffect(() => {
-        handleDemoStart()
-    }, [lunchCode]);
 
     useEffect(() => {
         // 捕捉 iframe 報錯
@@ -77,11 +59,36 @@ const LunchView = (props: LunchView_Props) => {
                     {
                         status: e.data.status,
                         message: e.data.status === 'error' ? e.data.error : e.data.message,
+                        timelog: getNowTime("full")
                     }
                 ])
             }
         }, false)
     }, []);
+
+
+    // 偵測 lunchCode 是否啟動，啟動後更新 demo src
+    useEffect(() => {
+        handleDemoStart()
+    }, [lunchCode]);
+
+
+    function handleDemoStart() {
+        setDemoDown((prevState) => !prevState)
+        setDemoSrc(html_code + `<script>${LISTEN_LOG}</script>` + `<style>${css_code}</style>` + `<script>${javascript_code} </script>`)
+        if (!demoDown) {
+            alertAndLoad.setLoading(true)
+            const updateData: studentProgramUpdate = {
+                program_id: program_id,
+                html_code: html_code,
+                css_code: css_code,
+                javascript_code: javascript_code
+            }
+            API_POST_studentProgram(JSON.stringify(updateData), 'update').then(response => {
+                alertAndLoad.setLoading(false)
+            })
+        }
+    }
 
     return (
         <Container
@@ -107,8 +114,7 @@ const LunchView = (props: LunchView_Props) => {
                 justifyContent: 'center',
                 flexDirection: 'column',
                 transitionDuration: '0.5s',
-                transform: demoDown ? 'none' : 'translateY(-91vh)',
-
+                transform: demoDown ? 'translateY(10px)' : 'translateY(-90vh)',
             }}>
                 <iframe
                     id='Worker_LunchView_demoView'
@@ -119,34 +125,36 @@ const LunchView = (props: LunchView_Props) => {
                         height: '95%',
                         border: 'none',
                         borderRadius: '10px',
-                        boxShadow: demoDown ? '-1px -1px 5px 2px rgba(255,255,255,0.5)' : 'none',
-                        backgroundColor: 'rgba(255,255,255, 0.5)',
+                        // boxShadow: demoDown ? '-1px -1px 5px 2px rgba(255,255,255,0.5)' : 'none',
+                        backgroundColor: '#e5e5e5',
                         pointerEvents: 'all',
+                        // backdropFilter: 'blur(10px)',
                     }}
                     srcDoc={demoSrc}
                 />
                 <Container
                     id='Worker_LunchView_demoBtn'
                     sx={{
-                        width: '10%',
-                        height: '5%',
-                        border: '1px solid #fca311',
-                        borderRadius: '0 0 20px 20px',
-                        boxShadow: '0 0 2px 1px #fca311',
+                        width: '8%',
+                        height: '3%',
+                        // border: '1px solid #fca311',
+                        borderRadius: '0 0 10px 10px',
+                        // boxShadow: '0 0 2px 1px #fca311',
                         display: 'flex',
                         transitionDuration: '0.5s',
                         alignItems: 'center',
                         justifyContent: 'center',
                         pointerEvents: 'all',
                         transform: {xs: 'translateX(-100px)', md: 'none'},
-                        color: '#e5e5e5',
+                        color: '#14213d',
+                        backgroundColor: '#e5e5e5',
                         '&:hover': {
                             backgroundColor: '#fca311',
                             color: '#14213d'
                         }
                     }}
                 >
-                    <VideoLabelIcon/>
+                    <PlayArrowIcon/>
                 </Container>
             </Box>
         </Container>

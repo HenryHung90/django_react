@@ -3,7 +3,12 @@ from django.http import HttpResponse
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+
+# local file join
+import os
 import json
+import uuid
+from datetime import datetime
 
 # ollama
 import ollama
@@ -34,7 +39,32 @@ from .serializers import (
 """
 
 
-# @ensure_csrf_cookie
+# tools function
+def get_folder_size(folder_path):
+    """
+    取得資料夾的大小
+    @params folder_path 資料夾路徑
+    """
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            total_size += os.path.getsize(fp)
+    return total_size
+
+
+def read_file(file_path):
+    """
+    取得 file 的內容
+    @params file_path 檔案路徑
+    """
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            return f.read()
+    return ''
+
+
+@ensure_csrf_cookie
 @api_view(['POST'])
 def register(request):
     """
@@ -186,41 +216,11 @@ def create_class_category(request):
         return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# Student Program
-@api_view(['POST'])
-def studentprogram_getall(request):
-    """
-    取得所有 StudentProgram 內容
-    """
-    try:
-        student_info = StudentAccount.objects.get(username=request.user.username)
-        program_list = StudentProgram.objects.filter(sid=student_info.sid)
-        serializers = StudentProgramSerializerGetAll(program_list, many=True)
-        return Response({'message': json.dumps(serializers.data), 'status': 200}, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        print(f'studentprogram_getall Error: {e}')
-        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-def studentprogram_getone(request):
-    """
-    取得單一 StudentProgram 內容
-    """
-    try:
-        student_info = StudentAccount.objects.get(username=request.user.username)
-        program_list = StudentProgram.objects.get(sid=student_info.sid, program_id=request.data.get('message'))
-        serializers = StudentProgramSerializerGetOne(program_list, many=False)
-        return Response({'message': json.dumps(serializers.data), 'status': 200}, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        print(f'studentprogram_getall Error: {e}')
-        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
 @api_view(['POST'])
 def studentprogram_create(request):
+    """
+    建立學生 Program 基本狀態
+    """
     try:
         serializer = StudentProgramSerializerGetAll(data=request.data)
         if serializer.is_valid():
@@ -238,12 +238,42 @@ def studentprogram_update(request):
     try:
         data = json.loads(request.data.get('message'))
 
+        # 儲存到資料庫，最新 Coding 資料
         student_info = StudentAccount.objects.get(username=request.user.username)
         student_program = StudentProgram.objects.get(sid=student_info.sid, program_id=data.get('program_id'))
         student_program.html_code = data.get('html_code')
         student_program.css_code = data.get('css_code')
         student_program.javascript_code = data.get('javascript_code')
         student_program.save()
+        # 儲存到本地端，歷史資料
+        # 本地資料位置
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # program_history
+        student_program_dir = os.path.join(base_dir, 'program_history', f'{str(student_info.sid)}_{student_info.name}')
+        # 創建學生專屬資料夾
+        os.makedirs(student_program_dir, exist_ok=True)
+
+        # 創建該 Program 資料夾
+        program_id_dir = os.path.join(student_program_dir, data.get('program_id'))
+
+        # 創建時序資料夾
+        datetime_str = datetime.now().strftime('%Y%m%d_%H-%M-%S')
+        datetime_dir = os.path.join(program_id_dir, datetime_str)
+        os.makedirs(datetime_dir, exist_ok=True)
+
+        # 創建 html, css, javascript 檔案
+        # hex -> 創建不包含連字符的16進制
+        # file_uuid = uuid.uuid4().hex
+        html_file = os.path.join(datetime_dir, 'index.html')
+        css_file = os.path.join(datetime_dir, 'style.css')
+        javascript_file = os.path.join(datetime_dir, 'javascript.js')
+
+        with open(html_file, 'w', newline='') as f:
+            f.write(student_program.html_code)
+        with open(css_file, 'w', newline='') as f:
+            f.write(student_program.css_code)
+        with open(javascript_file, 'w', newline='') as f:
+            f.write(student_program.javascript_code)
 
         return Response({'message': 'success', 'status': 200}, status=status.HTTP_200_OK)
 
@@ -260,3 +290,80 @@ def get_class_category(request):
     categories = ClassCategory.objects.all()
     serializer = ClassCategorySerializer(categories, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Student Program
+@api_view(['GET'])
+def get_studentprogram_getall(request):
+    """
+    取得所有 StudentProgram 內容
+    """
+    try:
+        student_info = StudentAccount.objects.get(username=request.user.username)
+        program_list = StudentProgram.objects.filter(sid=student_info.sid)
+        serializers = StudentProgramSerializerGetAll(program_list, many=True)
+        return Response({'message': json.dumps(serializers.data), 'status': status.HTTP_200_OK},
+                        status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(f'studentprogram_getall Error: {e}')
+        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_studentprogram_getone(request):
+    """
+    取得單一 StudentProgram 內容
+    """
+    try:
+        # 獲取查詢參數
+        program_id = request.query_params.get('program_id')
+        if not program_id:
+            return Response({'message': 'program_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        student_info = StudentAccount.objects.get(username=request.user.username)
+        program = StudentProgram.objects.get(sid=student_info.sid, program_id=program_id)
+        serializers = StudentProgramSerializerGetOne(program, many=False)
+        return Response({'message': json.dumps(serializers.data), 'status': status.HTTP_200_OK},
+                        status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print(f'studentprogram_getall Error: {e}')
+        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_studentprogram_history(request):
+    """
+    取得 Student 的編輯紀錄
+    """
+    try:
+        # 獲取查詢參數
+        program_id = request.query_params.get('program_id')
+        if not program_id:
+            return Response({'message': 'program_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 獲取學生資訊
+        student_info = StudentAccount.objects.get(username=request.user.username)
+        student_dir = f"{student_info.sid}_{student_info.name}"
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        program_dir = os.path.join(base_dir, 'program_history', student_dir, program_id)
+
+        if not os.path.exists(program_dir):
+            return Response({'message': 'Program directory not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # 取得所有歷史紀錄
+        history_data = []
+
+        for program in os.listdir(program_dir):
+            history_data.append({
+                'time': program,
+                'size': get_folder_size(os.path.join(program_dir, program)),
+                'html_code': read_file(os.path.join(program_dir, program, 'index.html')),
+                'css_code': read_file(os.path.join(program_dir, program, 'style.css')),
+                'javascript_code': read_file(os.path.join(program_dir, program, 'javascript.js')),
+            })
+
+        return Response({'message': json.dumps(history_data), 'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
+    except Exception as e:
+        print(f'studentprogram_history Error: {e}')
+        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)

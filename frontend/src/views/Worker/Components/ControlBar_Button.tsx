@@ -1,6 +1,5 @@
 import React from "react";
 // style
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import {Button} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SaveIcon from "@mui/icons-material/Save";
@@ -26,7 +25,6 @@ const ControlBar_Button = (props: ControlBarButton_Props) => {
             }}
             onClick={controlPanel[type]}
         >
-            {type === 'lunch' && <PlayArrowIcon sx={{color: 'white', margin: '0 auto'}}/>}
             {type === 'save' && <SaveIcon sx={{color: codeSync ? 'white' : '#d62828', margin: '0 auto'}}/>}
             {type === 'leave' && <LogoutIcon sx={{color: 'white', margin: '0 auto'}}/>}
         </Button>
