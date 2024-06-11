@@ -17,7 +17,7 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faHtml5, faCss3Alt, faJsSquare} from '@fortawesome/free-brands-svg-icons';
 // API
-import {API_studentprogram} from "../../../utils/API/API_POST";
+import {API_POST_studentProgram} from "../../../utils/API/API_POST";
 
 // Components
 import ControlBar_Menu from "./ControlBar_Menu";
@@ -37,6 +37,7 @@ const ControlBar = (props: ControlBar_Props) => {
         html_code,
         css_code,
         javascript_code,
+        alertAndLoad,
     } = props
     // 手機板 Nav Button
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -72,7 +73,7 @@ const ControlBar = (props: ControlBar_Props) => {
             }
         },
         {
-            pageName: 'console',
+            pageName: 'terminal',
             pageIcon: <TerminalIcon/>,
             click: (e: React.MouseEvent<HTMLElement> | undefined) => {
                 setCurrentPage('terminal')
@@ -83,29 +84,17 @@ const ControlBar = (props: ControlBar_Props) => {
 
     // 右側控制盤
     const controlPanel: { [key: string]: () => void } = {
-        lunch: () => {
-            setLunchCode((prevState) => !prevState)
-            setCodeSync(true)
-            const updateData: studentProgramUpdate = {
-                program_id: program_id,
-                html_code: html_code,
-                css_code: css_code,
-                javascript_code: javascript_code
-            }
-            API_studentprogram(JSON.stringify(updateData), 'update').then(response => {
-
-            })
-        },
         save: () => {
             setCodeSync(true)
+            alertAndLoad.setLoading(true)
             const updateData: studentProgramUpdate = {
                 program_id: program_id,
                 html_code: html_code,
                 css_code: css_code,
                 javascript_code: javascript_code
             }
-            API_studentprogram(JSON.stringify(updateData), 'update').then(response => {
-
+            API_POST_studentProgram(JSON.stringify(updateData), 'update').then(response => {
+                alertAndLoad.setLoading(false)
             })
         },
         leave: () => {
@@ -119,12 +108,12 @@ const ControlBar = (props: ControlBar_Props) => {
         <AppBar position="static" sx={{backgroundColor: '#14213d', boxShadow: 'none', maxHeight: '10vh'}}>
             <Container maxWidth={false}>
                 <Toolbar disableGutters>
-                    <CodeIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
+                    <CodeIcon sx={{display: {xs: 'none', md: 'flex'}, mt: '16px', mr: 1}}/>
                     <Typography
                         variant="h6"
-                        noWrap
                         component="a"
                         sx={{
+                            mt: '16px',
                             mr: 10,
                             // 透過 display 選擇甚麼模板下 要出現/隱藏
                             display: {xs: 'none', md: 'flex'},
@@ -143,8 +132,7 @@ const ControlBar = (props: ControlBar_Props) => {
                     <ControlBar_Menu currentPage={currentPage} pages={pages} isComputer={false}
                                      anchorElNav={anchorElNav}
                                      setAnchorElNav={setAnchorElNav}/>
-                    <Box sx={{flexGrow: 0}}>
-                        <ControlBar_Button type={'lunch'} controlPanel={controlPanel} codeSync={codeSync}/>
+                    <Box sx={{flexGrow: 0, mt: '14px'}}>
                         <ControlBar_Button type={'save'} controlPanel={controlPanel} codeSync={codeSync}/>
                         <ControlBar_Button type={'leave'} controlPanel={controlPanel} codeSync={codeSync}/>
                     </Box>

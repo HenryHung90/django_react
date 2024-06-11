@@ -22,20 +22,16 @@ const API_ollama_ask = (content: string) => {
  * @param type 使用何種模式
  * @constructor
  */
-const API_studentprogram = (content: string, type: 'getall' | 'getone' | 'create' | 'update') => {
+const API_POST_studentProgram = (content: string, type: 'create' | 'update') => {
     const programData: RequestParams = {
         message: content,
     }
     switch (type) {
         case "create":
             return new API_POST(process.env.REACT_APP_API_STUDENTPROGRAM_CREATE || '', programData).sendRequest()
-        case "getall":
-            return new API_POST(process.env.REACT_APP_API_STUDENTPROGRAM_GETALL || '', programData).sendRequest()
-        case "getone":
-            return new API_POST(process.env.REACT_APP_API_STUDENTPROGRAM_GETONE || '', programData).sendRequest()
         case "update":
             return new API_POST(process.env.REACT_APP_API_STUDENTPROGRAM_UPDATE || '', programData).sendRequest()
     }
 }
 
-export {API_ollama_ask, API_studentprogram}
+export {API_ollama_ask, API_POST_studentProgram}

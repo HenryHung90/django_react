@@ -2,7 +2,7 @@ import React from "react";
 import {AlertAndLoad} from "../GlobalComponents/AlertAndLoad"
 import {pageSetting} from "../ControlBar";
 
-// Worker.tsx
+// Worker.tsx--------------------------------------------------------------------
 interface Worker_Props {
     UserName: string | undefined
     alertAndLoad: AlertAndLoad
@@ -17,9 +17,10 @@ type userCode = {
 type terminalMessage = {
     status: 'log' | 'error',
     message: string,
+    timelog: string,
 }
 
-// CodingPlace.tsx
+// CodingPlace.tsx--------------------------------------------------------------------
 interface CodingPlace_Props {
     languageType: 'html' | 'javascript' | 'css' | 'terminal',
     setCodeSync: React.Dispatch<React.SetStateAction<boolean>>,
@@ -33,7 +34,7 @@ interface CodingPlace_Props {
     setTerminal_code: React.Dispatch<React.SetStateAction<Array<terminalMessage>>>
 }
 
-// ControlBar.tsx
+// ControlBar.tsx--------------------------------------------------------------------
 interface ControlBar_Props {
     currentPage: string,
     setCurrentPage: React.Dispatch<React.SetStateAction<'html' | 'javascript' | 'css' | 'terminal'>>,
@@ -43,6 +44,7 @@ interface ControlBar_Props {
     html_code: string,
     css_code: string,
     javascript_code: string,
+    alertAndLoad: AlertAndLoad
 }
 
 type studentProgramUpdate = {
@@ -52,14 +54,14 @@ type studentProgramUpdate = {
     javascript_code: string
 }
 
-// ControlBar_Button.tsx
+// ControlBar_Button.tsx------------------------------------------------------------
 interface ControlBarButton_Props {
-    type: 'lunch' | 'save' | 'leave',
+    type: 'save' | 'leave',
     controlPanel: { [key: string]: () => void },
     codeSync: boolean,
 }
 
-// ControlBar_Menu.tsx
+// ControlBar_Menu.tsx--------------------------------------------------------------
 interface ControlBarMenu_Prop {
     pages: Array<pageSetting>,
     currentPage: string,
@@ -68,15 +70,35 @@ interface ControlBarMenu_Prop {
     setAnchorElNav: React.Dispatch<React.SetStateAction<null | HTMLElement>>
 }
 
-// LunchView.tsx
+// LunchView.tsx--------------------------------------------------------------------
 interface LunchView_Props {
     lunchCode: boolean,
     html_code: string,
     css_code: string,
     javascript_code: string,
     setTerminal_code: React.Dispatch<React.SetStateAction<Array<terminalMessage>>>
+    alertAndLoad: AlertAndLoad
 }
 
+// History.tsx---------------------------------------------------------------------
+interface History_Props {
+    alertAndLoad: AlertAndLoad,
+}
+
+// History_List.tsx----------------------------------------------------------------
+type historyValue = {
+    time: string,
+    size: number,
+    html_code: string,
+    css_code: string,
+    javascript_code: string,
+}
+
+interface HistoryList_Props {
+    index: number,
+    value: historyValue,
+    alertAndLoad: AlertAndLoad,
+}
 
 export type {
     Worker_Props,
@@ -87,5 +109,8 @@ export type {
     studentProgramUpdate,
     ControlBarButton_Props,
     ControlBarMenu_Prop,
-    LunchView_Props
+    LunchView_Props,
+    History_Props,
+    historyValue,
+    HistoryList_Props,
 }

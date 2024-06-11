@@ -13,8 +13,6 @@ API_POST = [
     # ClassCategory 相關
     path('create_classcategory/', views.create_class_category, name='create_classCategory'),
     # WorkPlace 相關
-    path('studentprogram/getall/', views.studentprogram_getall, name='studentprogram_getall'),
-    path('studentprogram/getone/', views.studentprogram_getone, name='studentprogram_getone'),
     path('studentprogram/create/', views.studentprogram_create, name='studentprogram_create'),
     path('studentprogram/update/', views.studentprogram_update, name='studentprogram_update'),
 ]
@@ -25,7 +23,10 @@ API_GET = [
     path('get_userinfo/', views.userinfo_view, name='userinfo_view'),
     # ClassCategory 相關
     path('get_classcategory', views.get_class_category, name='get_classCategory'),
-
+    # WorkPlace 相關
+    path('studentprogram/getall/', views.get_studentprogram_getall, name='studentprogram_getall'),
+    path('studentprogram/getone/', views.get_studentprogram_getone, name='studentprogram_getone'),
+    path('studentprogram/gethistory/', views.get_studentprogram_history, name='studentprogram_history'),
 ]
 
 urlpatterns += API_POST + API_GET
